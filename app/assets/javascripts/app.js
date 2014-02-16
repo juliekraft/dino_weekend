@@ -1,4 +1,4 @@
-Dinosaur = Backbone.Model.extend ({
+var Dinosaur = Backbone.Model.extend ({
   defaults: {
     name: "Essie",
     species: "Veloceraptor",
@@ -9,7 +9,7 @@ Dinosaur = Backbone.Model.extend ({
   }
 })
 
-DinosaurView = Backbone.View.extend ({
+var DinosaurView = Backbone.View.extend ({
   initialize: function(){
     console.log("DinosaurView created!");
     this.render();
@@ -27,31 +27,90 @@ DinosaurView = Backbone.View.extend ({
   }
 })
 
-DinosaurList = Backbone.Collection.extend ({
+var DinosaurList = Backbone.Collection.extend ({
   model: Dinosaur,
   initialize: function(){
     console.log("DinosaurList created!");
+  },
+  url: '/dinosaurs',
+  model: function(attrs){
+    return new Dinosaur(attrs);
   }
 })
 
-DinosaurListView = Backbone.View.extend ({
+var DinosaurListView = Backbone.View.extend ({
   initialize: function(){
     console.log("DinosaurListView created!", this.collection);
-    this.listenTo(this.collection, 'add', this.render)
+
+    this.collection = new DinosaurList();
+
+    this.listenTo(this.collection, 'add', this.render);
+    this.collection.fetch();
+    this.views = [];
   },
   el: function(){
     return $('#dinosaur_div');
   },
   render: function(){
-    this.$el.html("DINO DNA");
-    return this;
+    var self = this;
+
+    //removes old views
+    _.each(this.views, function(view){
+      view.remove();
+    })
+
+    // attach new views synced to existing models
+    // why is models plural????????????
+    _.each( this.collection.models, function(dinosaur){
+      var dinosaur_view = new DinosaurView({
+        model: dinosaur
+      });
+
+      self.$el.append(dinosaur_view.$el);
+      self.views.push(dinosaur_view);
+    })
+
+  }
+})
+
+var FormView = Backbone.View.extend ({
+  initialize: function(){
+    console.log("FormView initialized!")
+    this.$('#dinosaur_update_button').hide();
+  },
+  el: function(){
+    return $('#dinosaur_form');
+  },
+  submitCallback: function(e){
+    e.preventDefault();
+
+    var array_of_dinosaur_data = this.$el.serializeArray();
+
+    // creating an instance of dinosaur and placing it in the collection
+    list_view.collection.create({
+      name: array_of_dinosaur_data[0].value,
+      species: array_of_dinosaur_data[1].value,
+      gender: array_of_dinosaur_data[2].value
+    });
+
+    this.resetValues();
+  },
+  resetValues: function(){
+    _.each(this.$('input'), function(input){
+      $(input).val('');
+    })
+  },
+  events: {
+    "click #dinosaur_create_button" : "submitCallback"
   }
 })
 
 $(function(){
-  console.log("Document ready!");
-  list = new DinosaurList();
-  listView = new DinosaurListView({collection: list});
+  window.form_view = new FormView();
+  window.list_view = new DinosaurListView();
+  // console.log("Document ready!");
+  // list = new DinosaurList();
+  // listView = new DinosaurListView({collection: list});
 
 })
 

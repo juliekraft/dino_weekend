@@ -1,11 +1,13 @@
 class DinosaursController < ApplicationController
 
   def index
-    # respond_to do |format|
-      # format.html
-      # format.json {render json: Dinosaur.all}
-    # end
-    # render json: Dinosaur.all
+    @dinosaurs = Dinosaur.all
+
+    respond_to do |format|
+      format.html
+      format.json {render json: @dinosaurs}
+    end
+    
   end
 
   def create
