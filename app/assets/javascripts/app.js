@@ -55,7 +55,7 @@ var DinosaurListView = Backbone.View.extend ({
 
     this.collection = new DinosaurList();
 
-    this.listenTo(this.collection, 'add', this.render);
+    this.listenTo(this.collection, 'all', this.render);
     this.collection.fetch();
     this.views = [];
   },
