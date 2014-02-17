@@ -28,13 +28,13 @@ var DinosaurView = Backbone.View.extend ({
     return listTemplate(attrs);
   },
   render: function(){
-    this.$el.html(this.template(this.model.attributes)).append(" " + "<button class='remove'>Remove</button> <button class='edit'>Edit</button>");
+    this.$el.html(this.template(this.model.attributes)).append(" " + "<button class='delete'>Delete</button> <button class='edit'>Edit</button>");
     console.log(this.model.attributes);
   },
     events: {
-    "click .remove" : "remove"
+    "click .delete" : "delete"
   },
-    remove: function(){
+    delete: function(){
     console.log("Remove")
     this.model.destroy()
     this.render()
