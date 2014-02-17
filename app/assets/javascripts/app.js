@@ -14,21 +14,18 @@ var DinosaurView = Backbone.View.extend ({
     console.log("DinosaurView created!");
     this.render();
   },
-  render: function(){
-    this.$el.html(this.template(this.model.attributes));
-    console.log(this.model.attributes);
-  },
   template: function(attrs){
-    var template = _.template("My name is <%=this.name%>, and I'm a <%= this.gender %> <%= this.species %>!");
-    return template(attrs);
+    console.log(this)
+    var listTemplate = _.template("My name is <%=name%>, and I'm a <%= gender %> <%= species %>!");
+    return listTemplate(attrs);
   },
-  el: function(){
-
+  render: function(){
+    this.$el.html(this.template(this.model.attributes)).append(" " + "<button class='remove'>Remove</button> <button class='edit'>Edit</button>");
+    console.log(this.model.attributes);
   }
 })
 
 var DinosaurList = Backbone.Collection.extend ({
-  model: Dinosaur,
   initialize: function(){
     console.log("DinosaurList created!");
   },
@@ -69,7 +66,12 @@ var DinosaurListView = Backbone.View.extend ({
       self.$el.append(dinosaur_view.$el);
       self.views.push(dinosaur_view);
     })
-
+  },
+  events: {
+    "click .remove" : "remove"
+  },
+    remove: function(){
+    console.log("Remove")
   }
 })
 
@@ -101,7 +103,7 @@ var FormView = Backbone.View.extend ({
     })
   },
   events: {
-    "click #dinosaur_create_button" : "submitCallback"
+    "click #dinosaur_create_button" : "submitCallback",
   }
 })
 
