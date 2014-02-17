@@ -4,8 +4,12 @@ var Dinosaur = Backbone.Model.extend ({
     species: "Veloceraptor",
     gender: "genderqueer"
   },
-  initialize: function(){
-    console.log("Dinosaur created!");
+  url: function(){
+    if(this.get("id")){
+      return "/dinosaurs/" + this.get("id")
+    } else {
+      return '/dinosaurs'
+    }
   }
 })
 
@@ -13,6 +17,11 @@ var DinosaurView = Backbone.View.extend ({
   initialize: function(){
     console.log("DinosaurView created!");
     this.render();
+    this.listenTo( list_view.collection, "remove", function(model){
+      model.destroy({
+        url: "/dinosaurs/" + model.id
+      });
+    })
   },
   template: function(attrs){
     var listTemplate = _.template("My name is <%=name%>, and I'm a <%= gender %> <%= species %>!");
@@ -21,6 +30,14 @@ var DinosaurView = Backbone.View.extend ({
   render: function(){
     this.$el.html(this.template(this.model.attributes)).append(" " + "<button class='remove'>Remove</button> <button class='edit'>Edit</button>");
     console.log(this.model.attributes);
+  },
+    events: {
+    "click .remove" : "remove"
+  },
+    remove: function(){
+    console.log("Remove")
+    this.model.destroy()
+    this.render()
   }
 })
 
@@ -29,9 +46,7 @@ var DinosaurList = Backbone.Collection.extend ({
     console.log("DinosaurList created!");
   },
   url: '/dinosaurs',
-  model: function(attrs){
-    return new Dinosaur(attrs);
-  }
+  model: Dinosaur
 })
 
 var DinosaurListView = Backbone.View.extend ({
@@ -65,12 +80,6 @@ var DinosaurListView = Backbone.View.extend ({
       self.$el.append(dinosaur_view.$el);
       self.views.push(dinosaur_view);
     })
-  },
-  events: {
-    "click .remove" : "remove"
-  },
-    remove: function(){
-    console.log("Remove")
   }
 })
 
