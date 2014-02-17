@@ -32,12 +32,16 @@ var DinosaurView = Backbone.View.extend ({
     console.log(this.model.attributes);
   },
     events: {
-    "click .delete" : "delete"
+    "click .delete" : "delete",
+    "click .edit" : "editCallback"
   },
     delete: function(){
     console.log("Remove")
     this.model.destroy()
     this.render()
+  },
+  editCallback: function(){
+    form_view.edit(this.model)
   }
 })
 
@@ -110,8 +114,37 @@ var FormView = Backbone.View.extend ({
       $(input).val('');
     })
   },
+  edit: function(model){
+    this.$('#dinosaur_create_button').hide();
+    this.$('#dinosaur_update_button').show();
+
+    this.$('#dinosaur_name').val(model.get('name'));
+    this.$('#dinosaur_species').val(model.get('species'));
+    this.$('#dinosaur_gender').val(model.get('gender'));
+
+    this.$('#dinosaur_update_button').on('click', function(e){
+      e.preventDefault();
+
+      model.set({
+        'name': form_view.$('#dinosaur_name').val(),
+        'species': form_view.$('#dinosaur_species').val(),
+        'gender': form_view.$('#dinosaur_gender').val()
+      })
+
+      model.save({}, {
+        url: "/dinosaurs/"+model.id
+      })
+
+      form_view.$('#dinosaur_create_button').show();
+      form_view.$('#dinosaur_update_button').hide();
+
+      $(this).off('click');
+    })
+
+  },
   events: {
     "click #dinosaur_create_button" : "submitCallback",
+    "click #dinosaur_update_button" : "updateCallback"
   }
 })
 
