@@ -15,7 +15,6 @@ var DinosaurView = Backbone.View.extend ({
     this.render();
   },
   template: function(attrs){
-    console.log(this)
     var listTemplate = _.template("My name is <%=name%>, and I'm a <%= gender %> <%= species %>!");
     return listTemplate(attrs);
   },
