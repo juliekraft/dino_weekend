@@ -14,21 +14,17 @@ var DinosaurView = Backbone.View.extend ({
     console.log("DinosaurView created!");
     this.render();
   },
+  template: function(attrs){
+    var listTemplate = _.template("My name is <%=name%>, and I'm a <%= gender %> <%= species %>!");
+    return listTemplate(attrs);
+  },
   render: function(){
     this.$el.html(this.template(this.model.attributes));
     console.log(this.model.attributes);
-  },
-  template: function(attrs){
-    var template = _.template("My name is <%=this.name%>, and I'm a <%= this.gender %> <%= this.species %>!");
-    return template(attrs);
-  },
-  el: function(){
-
   }
 })
 
 var DinosaurList = Backbone.Collection.extend ({
-  model: Dinosaur,
   initialize: function(){
     console.log("DinosaurList created!");
   },
